@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.*
+
+# Next.js / Vercel
+/.next/
+/out/
+/build/
+/.vercel
+
+# Environment & Local Config
+.env*
+*.tsbuildinfo
+next-env.d.ts
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local AI Context & Source Materials (Not for repo / Vercel deployment)
+.agents/
+context-source/
