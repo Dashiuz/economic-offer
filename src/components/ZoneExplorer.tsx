@@ -58,6 +58,7 @@ const PILLAR_STYLES: Record<
 
 export default function ZoneExplorer() {
   const [activeZoneId, setActiveZoneId] = useState(BUILDING_ZONES[0].id);
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const modalTitleId = useId();
@@ -65,6 +66,13 @@ export default function ZoneExplorer() {
 
   const activeZone =
     BUILDING_ZONES.find((z) => z.id === activeZoneId) ?? BUILDING_ZONES[0];
+  const featuredPhoto =
+    activeZone.gallery[activePhotoIndex] ?? activeZone.gallery[0];
+
+  const selectZone = (zoneId: string) => {
+    setActiveZoneId(zoneId);
+    setActivePhotoIndex(0);
+  };
 
   // Fallback for browsers without native <dialog closedby="any"> (e.g., Safari)
   useEffect(() => {
@@ -113,7 +121,7 @@ export default function ZoneExplorer() {
 
     if (nextIndex !== -1) {
       e.preventDefault();
-      setActiveZoneId(BUILDING_ZONES[nextIndex].id);
+      selectZone(BUILDING_ZONES[nextIndex].id);
       tabRefs.current[nextIndex]?.focus();
     }
   };
@@ -125,7 +133,7 @@ export default function ZoneExplorer() {
         aria-labelledby={sectionHeadingId}
         className="relative py-16 sm:py-24"
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="domus-container">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -134,16 +142,16 @@ export default function ZoneExplorer() {
             className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end"
           >
             <div>
-              <p className="text-xs font-semibold tracking-[0.22em] text-[#D4AF37] uppercase">
+              <p className="text-xs font-semibold tracking-[0.22em] text-[#D4AF37] uppercase sm:text-sm">
                 Recorrido por Áreas del Edificio
               </p>
               <h2
                 id={sectionHeadingId}
-                className="mt-2 text-2xl font-bold tracking-[-0.03em] text-slate-50 sm:text-4xl"
+                className="mt-2 text-3xl font-bold tracking-[-0.03em] text-slate-50 sm:text-4xl lg:text-[2.65rem]"
               >
                 Cobertura Completa por Zonas
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-400 sm:text-base">
+              <p className="mt-3 max-w-3xl text-base leading-relaxed text-slate-400 sm:text-lg">
                 Así se distribuyen los 14 lectores faciales, 5 electroimanes, 6
                 brazos hidráulicos, 5 botones sin contacto y 12 botones de
                 emergencia en todo el edificio.
@@ -153,18 +161,18 @@ export default function ZoneExplorer() {
             <button
               type="button"
               onClick={() => dialogRef.current?.showModal()}
-              className="no-print inline-flex shrink-0 items-center gap-2 self-start rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/10 px-4 py-2.5 text-sm font-semibold text-[#F3E5AB] transition hover:bg-[#D4AF37]/20 lg:self-auto"
+              className="no-print inline-flex shrink-0 items-center gap-2 self-start rounded-xl border border-[#D4AF37]/40 bg-[#D4AF37]/10 px-5 py-3 text-sm font-semibold text-[#F3E5AB] transition hover:bg-[#D4AF37]/20 sm:text-base lg:self-auto"
             >
               <MapIcon className="h-4 w-4 text-[#D4AF37]" />
               Ver Plano General de Ubicación
             </button>
           </motion.div>
 
-          {/* Horizontal single-row scrollable tablist */}
+          {/* Symmetrical 4-Column Zone Selector */}
           <div
             role="tablist"
             aria-label="Zonas de cobertura del Edificio Domus"
-            className="mt-8 flex flex-nowrap gap-2 overflow-x-auto pb-2"
+            className="no-print mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4"
           >
             {BUILDING_ZONES.map((zone, index) => {
               const Icon = ZONE_ICONS[zone.id] ?? Building;
@@ -180,28 +188,28 @@ export default function ZoneExplorer() {
                   id={`zone-tab-${zone.id}`}
                   aria-selected={selected}
                   tabIndex={selected ? 0 : -1}
-                  onClick={() => setActiveZoneId(zone.id)}
+                  onClick={() => selectZone(zone.id)}
                   onKeyDown={(e) => handleTabKeyDown(e, index)}
-                  className={`relative flex shrink-0 items-center gap-2.5 rounded-xl border px-4 py-3 text-left transition ${
+                  className={`relative flex items-center gap-3 rounded-2xl border px-4 py-3.5 text-left transition sm:px-5 ${
                     selected
-                      ? "border-[#D4AF37]/50 bg-[#12141D] text-slate-50"
+                      ? "border-[#D4AF37]/60 bg-[#12141D] text-slate-50 shadow-[0_8px_24px_rgba(212,175,55,0.1)]"
                       : "border-white/8 bg-white/[0.02] text-slate-400 hover:border-white/20 hover:text-slate-200"
                   }`}
                 >
                   <span
-                    className={`flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold ${
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${
                       selected
                         ? "bg-[#D4AF37]/20 text-[#F3E5AB]"
                         : "bg-white/5 text-slate-400"
                     }`}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-5 w-5" />
                   </span>
-                  <span>
-                    <span className="block font-mono text-[10px] tracking-wider text-slate-400 uppercase">
+                  <span className="min-w-0">
+                    <span className="block font-mono text-xs tracking-wider text-slate-400 uppercase">
                       Zona {zone.number}
                     </span>
-                    <span className="block text-xs font-semibold whitespace-nowrap sm:text-sm">
+                    <span className="block truncate text-sm font-bold sm:text-base">
                       {zone.shortLabel}
                     </span>
                   </span>
@@ -209,7 +217,7 @@ export default function ZoneExplorer() {
                     <motion.span
                       layoutId="zone-tab-underline"
                       aria-hidden="true"
-                      className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB]"
+                      className="absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB]"
                     />
                   ) : null}
                 </button>
@@ -217,7 +225,7 @@ export default function ZoneExplorer() {
             })}
           </div>
 
-          {/* Active Zone Panel */}
+          {/* Active Zone Panel: Balanced 6/6 Top Split + Full-Width 3-Column Bottom Strip */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeZone.id}
@@ -228,43 +236,43 @@ export default function ZoneExplorer() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="luxury-card mt-4 rounded-3xl p-5 sm:p-8"
+              className="luxury-card mt-5 rounded-3xl p-6 sm:p-8"
             >
-              <div className="grid gap-8 lg:grid-cols-12">
-                {/* Left Technical Details */}
-                <div className="space-y-6 lg:col-span-5">
+              <div className="grid items-start gap-8 lg:grid-cols-12">
+                {/* Left Column (6 cols): Narrative + Current Situation + Operation Flow */}
+                <div className="space-y-6 lg:col-span-6">
                   <div>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-[#38BDF8]/30 bg-[#38BDF8]/10 px-3 py-1 font-mono text-xs font-semibold text-[#38BDF8]">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-[#38BDF8]/30 bg-[#38BDF8]/10 px-3.5 py-1 font-mono text-xs font-semibold text-[#38BDF8] sm:text-sm">
                       ZONA {activeZone.number} · {activeZone.name}
                     </span>
-                    <h3 className="mt-3 text-xl font-bold tracking-tight text-slate-50 sm:text-2xl">
+                    <h3 className="mt-3 text-2xl font-bold tracking-tight text-slate-50 sm:text-[1.75rem] sm:leading-snug">
                       {activeZone.headline}
                     </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                    <p className="mt-3 text-base leading-relaxed text-slate-300">
                       {activeZone.description}
                     </p>
                   </div>
 
-                  <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-4">
-                    <p className="text-[11px] font-semibold tracking-wider text-amber-300 uppercase">
+                  <div className="rounded-2xl border border-amber-500/20 bg-amber-500/[0.04] p-5">
+                    <p className="text-xs font-bold tracking-wider text-amber-300 uppercase">
                       Situación Actual que se Resuelve
                     </p>
-                    <p className="mt-1.5 text-sm text-slate-300">
+                    <p className="mt-2 text-[15px] leading-relaxed text-slate-200 sm:text-base">
                       {activeZone.currentPain}
                     </p>
                   </div>
 
                   <div>
-                    <h4 className="text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                    <h4 className="text-xs font-bold tracking-wider text-slate-400 uppercase sm:text-sm">
                       Cómo Funcionará en el Día a Día
                     </h4>
-                    <ul className="mt-3 space-y-2.5">
+                    <ul className="mt-3.5 space-y-3">
                       {activeZone.solutionFlow.map((step, i) => (
                         <li
                           key={i}
-                          className="flex items-start gap-2.5 text-sm text-slate-200"
+                          className="flex items-start gap-3 text-[15px] leading-relaxed text-slate-200 sm:text-base"
                         >
-                          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#10B981]/15 text-[#10B981]">
+                          <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#10B981]/15 text-[#10B981]">
                             <Check className="h-3.5 w-3.5" />
                           </span>
                           <span>{step}</span>
@@ -272,70 +280,87 @@ export default function ZoneExplorer() {
                       ))}
                     </ul>
                   </div>
-
-                  <div className="grid gap-2.5 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-                    {activeZone.hardwareSummary.map((hw) => (
-                      <div
-                        key={hw.label}
-                        className="rounded-xl border border-white/8 bg-[#090A0F]/65 p-3"
-                      >
-                        <p className="text-[11px] font-medium text-slate-400">
-                          {hw.label}
-                        </p>
-                        <p className="mt-1 text-xs font-semibold text-[#F3E5AB]">
-                          {hw.quantity}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
                 </div>
 
-                {/* Right Photo Gallery */}
-                <div className="lg:col-span-7">
+                {/* Right Column (6 cols): Uniform Featured Gallery + Visible All-Photos Strip */}
+                <div className="space-y-4 lg:col-span-6">
+                  <figure className="overflow-hidden rounded-2xl border border-white/10 bg-[#0D1018]">
+                    <div className="relative aspect-[16/10] w-full overflow-hidden">
+                      <Image
+                        src={featuredPhoto.src}
+                        alt={featuredPhoto.alt}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 48vw"
+                        className="object-cover"
+                      />
+                    </div>
+                    <figcaption className="border-t border-white/8 px-5 py-3.5 text-sm leading-relaxed text-slate-200 sm:text-[15px]">
+                      {featuredPhoto.caption}
+                    </figcaption>
+                  </figure>
+
+                  {/* Visible Thumbnail Grid so all zone photos stay visible & selectable */}
                   <div
-                    className={`grid gap-4 ${
-                      activeZone.gallery.length > 1
-                        ? "sm:grid-cols-2"
-                        : "grid-cols-1"
+                    className={`grid gap-3 ${
+                      activeZone.gallery.length === 3
+                        ? "grid-cols-3"
+                        : "grid-cols-2"
                     }`}
                   >
-                    {activeZone.gallery.map((photo, idx) => (
-                      <figure
-                        key={photo.src}
-                        className={`overflow-hidden rounded-2xl border border-white/10 bg-[#0D1018] ${
-                          activeZone.gallery.length === 3 && idx === 0
-                            ? "sm:col-span-2"
-                            : ""
-                        }`}
-                      >
-                        <div
-                          className={`relative w-full overflow-hidden ${
-                            activeZone.gallery.length === 3 && idx === 0
-                              ? "aspect-[16/9]"
-                              : "aspect-[4/3]"
+                    {activeZone.gallery.map((photo, idx) => {
+                      const isFeatured = idx === activePhotoIndex;
+                      return (
+                        <button
+                          key={photo.src}
+                          type="button"
+                          onClick={() => setActivePhotoIndex(idx)}
+                          aria-pressed={isFeatured}
+                          className={`group overflow-hidden rounded-xl border text-left transition ${
+                            isFeatured
+                              ? "border-[#D4AF37]/70 bg-[#D4AF37]/10"
+                              : "border-white/10 bg-[#0D1018] hover:border-white/25"
                           }`}
                         >
-                          <Image
-                            src={photo.src}
-                            alt={photo.alt}
-                            fill
-                            sizes="(max-width: 768px) 100vw, 45vw"
-                            className="object-cover transition duration-500 hover:scale-[1.02]"
-                          />
-                        </div>
-                        <figcaption className="border-t border-white/8 px-4 py-3 text-xs leading-relaxed text-slate-300">
-                          {photo.caption}
-                        </figcaption>
-                      </figure>
-                    ))}
+                          <div className="relative aspect-[16/10] w-full overflow-hidden">
+                            <Image
+                              src={photo.src}
+                              alt={photo.alt}
+                              fill
+                              sizes="(max-width: 1024px) 50vw, 20vw"
+                              className="object-cover transition duration-300 group-hover:scale-[1.03]"
+                            />
+                          </div>
+                          <span className="block truncate px-3 py-2 text-xs font-medium text-slate-300">
+                            Vista {idx + 1}: {photo.caption}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
+              </div>
+
+              {/* Full-Width 3-Column Hardware Summary Strip (eliminates narrow 10-line cramping) */}
+              <div className="print-cols-3 mt-8 grid items-stretch gap-4 border-t border-white/10 pt-6 md:grid-cols-3">
+                {activeZone.hardwareSummary.map((hw) => (
+                  <div
+                    key={hw.label}
+                    className="flex flex-col justify-between rounded-2xl border border-white/8 bg-[#090A0F]/65 p-5"
+                  >
+                    <p className="text-xs font-semibold tracking-wider text-slate-400 uppercase sm:text-sm">
+                      {hw.label}
+                    </p>
+                    <p className="mt-2 text-[15px] leading-relaxed font-semibold text-[#F3E5AB] sm:text-base">
+                      {hw.quantity}
+                    </p>
+                  </div>
+                ))}
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Integrated Engineering Pillars (from domus-luxury-proposal) */}
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {/* Integrated Engineering Pillars */}
+          <div className="print-cols-3 mt-8 grid items-stretch gap-5 md:grid-cols-3">
             {ENGINEERING_PILLARS.map((pillar, index) => {
               const Icon = PILLAR_ICONS[pillar.id] ?? Cpu;
               const style = PILLAR_STYLES[pillar.accent];
@@ -350,23 +375,25 @@ export default function ZoneExplorer() {
                     delay: index * 0.08,
                     ease: [0.16, 1, 0.3, 1],
                   }}
-                  className={`luxury-card rounded-2xl p-6 ${style.border}`}
+                  className={`luxury-card flex h-full flex-col justify-between rounded-2xl p-6 ${style.border}`}
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[11px] font-semibold ${style.badge}`}
-                    >
-                      {pillar.metric}
-                    </span>
-                    <Icon className={`h-5 w-5 ${style.icon}`} />
+                  <div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-xs font-semibold ${style.badge}`}
+                      >
+                        {pillar.metric}
+                      </span>
+                      <Icon className={`h-5 w-5 ${style.icon}`} />
+                    </div>
+                    <h3 className="mt-4 text-lg font-bold text-slate-50 sm:text-xl">
+                      {pillar.title}
+                    </h3>
+                    <p className="mt-1 font-mono text-xs text-slate-400 sm:text-sm">
+                      {pillar.model}
+                    </p>
                   </div>
-                  <h3 className="mt-4 text-base font-bold text-slate-50">
-                    {pillar.title}
-                  </h3>
-                  <p className="mt-0.5 font-mono text-xs text-slate-400">
-                    {pillar.model}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                  <p className="mt-3 text-[15px] leading-relaxed text-slate-300 sm:text-base">
                     {pillar.description}
                   </p>
                 </motion.article>
@@ -381,14 +408,14 @@ export default function ZoneExplorer() {
           closedby="any"
           aria-labelledby={modalTitleId}
         >
-          <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+          <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
             <div>
-              <p className="font-mono text-[11px] tracking-wider text-[#D4AF37] uppercase">
+              <p className="font-mono text-xs tracking-wider text-[#D4AF37] uppercase">
                 Plano de Distribución · Sótano 1 y Recepción
               </p>
               <h3
                 id={modalTitleId}
-                className="text-base font-bold text-slate-50 sm:text-lg"
+                className="text-lg font-bold text-slate-50 sm:text-xl"
               >
                 Mapa General de Equipos en el Edificio
               </h3>
@@ -397,13 +424,13 @@ export default function ZoneExplorer() {
               <button
                 type="submit"
                 aria-label="Cerrar plano general"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-slate-200 transition hover:border-[#D4AF37]/50 hover:text-white"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-slate-200 transition hover:border-[#D4AF37]/50 hover:text-white"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             </form>
           </div>
-          <div className="p-4 sm:p-6">
+          <div className="p-5 sm:p-6">
             <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl border border-white/10 bg-white">
               <Image
                 src="/images/blueprint-sotano.webp"
@@ -413,7 +440,7 @@ export default function ZoneExplorer() {
                 className="object-contain"
               />
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-slate-400">
+            <p className="mt-4 text-sm leading-relaxed text-slate-300">
               Ubicación general de los 14 lectores faciales, la esclusa de
               ascensores, los botones de emergencia en sótanos, las cámaras de
               placas vehiculares y los equipos de respaldo y cómputo en

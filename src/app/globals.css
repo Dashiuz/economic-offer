@@ -92,6 +92,48 @@ body {
   outline-offset: 3px;
 }
 
+/* Native date input theming & user-interaction validation (browser-ui-theming) */
+input[type="date"].domus-date-input {
+  accent-color: #d4af37;
+  color-scheme: dark;
+}
+
+input[type="date"].domus-date-input:user-invalid {
+  border-color: rgba(248, 113, 113, 0.75);
+}
+
+input[type="date"].domus-date-input:user-valid {
+  border-color: rgba(212, 175, 55, 0.55);
+}
+
+/* Native <details> accordion styling (accordion guide) */
+details.domus-accordion > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+details.domus-accordion > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.domus-accordion::details-content {
+  interpolate-size: allow-keywords;
+  overflow: clip;
+  contain: layout;
+}
+
+details.domus-accordion:not([open])::details-content {
+  block-size: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  details.domus-accordion::details-content {
+    transition: block-size 0.3s ease-in-out, content-visibility 0.3s ease-in-out,
+      display 0.3s ease-in-out;
+    transition-behavior: allow-discrete;
+  }
+}
+
 /* Native <dialog> modal scroll containment (modern-web-guidance) */
 dialog:modal {
   overscroll-behavior: contain;
@@ -205,30 +247,73 @@ input[type="range"].comparator-range::-moz-range-thumb {
   background: rgba(212, 175, 55, 0.5);
 }
 
+/* Smooth accordion chevron rotation */
+details.domus-accordion[open] .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+/* Presentation container utility */
+.domus-container {
+  width: 100%;
+  max-inline-size: 96rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .domus-container {
+    padding-inline: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .domus-container {
+    padding-inline: 2.75rem;
+  }
+}
+
+/* Balanced wrapped rows for pill groups (css-layout) */
+.flex-wrap-balance {
+  display: flex;
+  flex-wrap: wrap;
+  flex-wrap: balance;
+}
+
 /* Executive Print / PDF Export Styles */
 @media print {
   @page {
     size: letter;
-    margin: 14mm;
+    margin: 12mm 13mm;
   }
 
   :root {
     color-scheme: light;
   }
 
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
   html,
   body {
     background: #ffffff !important;
     color: #0f172a !important;
-    font-size: 10.5pt;
+    font-size: 9.5pt !important;
+    line-height: 1.45 !important;
   }
 
   header.no-print,
-  .no-print {
+  .no-print,
+  .print-hide-overlay {
     display: none !important;
   }
 
-  /* Ensure Framer Motion elements print visibly regardless of scroll state */
+  /* Ensure Framer Motion & collapsible details print visibly */
   * {
     opacity: 1 !important;
     transform: none !important;
@@ -237,26 +322,152 @@ input[type="range"].comparator-range::-moz-range-thumb {
     box-shadow: none !important;
   }
 
+  details.domus-accordion::details-content {
+    block-size: auto !important;
+    content-visibility: visible !important;
+    display: block !important;
+  }
+
+  main,
+  section,
+  footer,
+  article,
+  aside,
   .luxury-card,
-  section {
+  [class*="bg-[#090A0F]"],
+  [class*="bg-[#0D1018]"],
+  [class*="bg-[#12141D]"],
+  [class*="bg-[#06070B]"],
+  [class*="bg-white/"],
+  [class*="bg-amber-"],
+  [class*="bg-[#D4AF37]"],
+  [class*="bg-[#38BDF8]"],
+  [class*="bg-[#10B981]"],
+  [class*="bg-gradient"] {
     background: #ffffff !important;
+    background-image: none !important;
+  }
+
+  .print-dark-logo {
+    background: #090a0f !important;
+    border: 1px solid #0f172a !important;
+  }
+
+  /* High-contrast readable dark inks on white paper */
+  main *,
+  footer * {
     color: #0f172a !important;
-    border-color: #cbd5e1 !important;
-    break-inside: avoid-page;
+    text-shadow: none !important;
   }
 
   .text-gold-gradient {
     background: none !important;
-    color: #926c15 !important;
-    -webkit-text-fill-color: #926c15 !important;
+    color: #7c580c !important;
+    -webkit-text-fill-color: #7c580c !important;
+  }
+
+  main [class*="text-slate-400"],
+  main [class*="text-slate-500"],
+  footer,
+  footer * {
+    color: #334155 !important;
+  }
+
+  main [class*="text-[#D4AF37]"],
+  main [class*="text-[#F3E5AB]"] {
+    color: #7c580c !important;
+  }
+
+  main [class*="text-[#38BDF8]"] {
+    color: #0369a1 !important;
+  }
+
+  main [class*="text-[#10B981]"],
+  main [class*="text-[#6EE7B7]"] {
+    color: #047857 !important;
+  }
+
+  main [class*="text-amber-"] {
+    color: #92400e !important;
+  }
+
+  .luxury-card,
+  [class*="border-white/"],
+  [class*="border-[#"],
+  [class*="border-amber-"] {
+    border-color: #cbd5e1 !important;
+  }
+
+  .luxury-card {
+    padding: 11pt !important;
+    border-radius: 7pt !important;
+  }
+
+  section {
+    padding-block: 11pt !important;
+    break-inside: auto !important;
+  }
+
+  .domus-container {
+    max-inline-size: 100% !important;
+    padding-inline: 0 !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  article,
+  figure,
+  tr,
+  .print-keep-together {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .print-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8pt !important;
+  }
+
+  .print-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8pt !important;
+  }
+
+  .print-cols-2 > *,
+  .print-cols-3 > * {
+    grid-column: auto !important;
+  }
+
+  .quote-table-region {
+    container-type: normal !important;
+    overflow: visible !important;
+    border-color: #cbd5e1 !important;
   }
 
   table {
+    width: 100% !important;
+    border-collapse: collapse !important;
     page-break-inside: auto;
   }
 
-  tr {
-    break-inside: avoid;
-    page-break-inside: avoid;
+  thead {
+    display: table-header-group !important;
+  }
+
+  thead tr {
+    background: #f1f5f9 !important;
+  }
+
+  th,
+  td {
+    border-bottom: 1px solid #cbd5e1 !important;
+    padding: 4.5pt 5pt !important;
+    color: #0f172a !important;
   }
 }

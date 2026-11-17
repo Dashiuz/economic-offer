@@ -48,11 +48,21 @@ export interface BeforeAfterCase {
   afterTitle: string;
   afterSummary: string;
   impactMetric: string;
+  addedValueNote?: string;
   beforeImage: string;
   afterImage: string;
   beforeAlt: string;
   afterAlt: string;
   mode: "slider" | "split";
+}
+
+export interface ScheduleWeek {
+  weekNumber: number;
+  title: string;
+  startDayOffset: number;
+  endDayOffset: number;
+  deliverable: string;
+  activities: string[];
 }
 
 export interface BuildingZone {
@@ -113,7 +123,7 @@ export const HERO_METRICS: HeroMetric[] = [
     id: "faciales",
     value: 14,
     label: "Lectores Faciales de Acceso",
-    detail: "Reconocimiento del rostro en menos de 0,5 s para entrar y salir sin demoras",
+    detail: "Reconocimiento del rostro en segundos para entrar y salir sin demoras",
     accent: "cyan",
   },
   {
@@ -125,17 +135,17 @@ export const HERO_METRICS: HeroMetric[] = [
   },
   {
     id: "puertas",
-    value: 16,
-    label: "Puertas Controladas en Portería",
-    detail: "Administración centralizada en un solo sistema con registro de visitantes",
+    value: 9,
+    label: "Puertas Controladas con Facial",
+    detail: "Entrada principal, lobby, parqueaderos, ascensores y escaleras",
     accent: "emerald",
   },
   {
     id: "respaldo",
-    value: 24,
-    suffix: "/7",
-    label: "Respaldo Eléctrico Continuo",
-    detail: "Dos plantas UPS para mantener puertas y cámaras activas ante cortes de luz",
+    value: 30,
+    suffix: " días",
+    label: "Respaldo de Grabaciones",
+    detail: "Grabaciones de sistemas de control de acceso y vehicular hasta por 30 días",
     accent: "gold",
   },
 ];
@@ -152,7 +162,10 @@ export const BEFORE_AFTER_CASES: BeforeAfterCase[] = [
     afterTitle: "Solución Propuesta",
     afterSummary:
       "Ventanilla moderna con marco oscuro y apertura hacia adentro, acompañada de un lector facial exclusivo para domiciliarios sin abrir la puerta exterior.",
-    impactMetric: "No se vuelve a abrir la puerta principal para entregas",
+    impactMetric:
+      "No se abre un portón tan grande y pesado solo para recibir pedidos; ahora serán recibidos a través de una ventanilla que le da seguridad al conjunto y al guarda, dejando la puerta únicamente para ingresos con dimensiones grandes.",
+    addedValueNote:
+      "Valor agregado IngExpertos: la gestión y adecuación de la ventanilla la realizará IngExpertos sin costo adicional.",
     beforeImage: "/images/before-after/domicilios-before.webp",
     afterImage: "/images/before-after/domicilios-after.webp",
     beforeAlt: "Recepción actual del Edificio Domus con buzón de madera y cableado expuesto",
@@ -205,7 +218,7 @@ export const BUILDING_ZONES: BuildingZone[] = [
     shortLabel: "Portería",
     headline: "Ingreso independiente para residentes y entregas sin abrir el lobby",
     description:
-      "Separamos el acceso de residentes, visitantes y domiciliarios con dos lectores faciales en la entrada, uno de salida en el interior y una ventanilla segura para recibir correspondencia.",
+      "Separamos el control de acceso para los residentes del de visitantes y domiciliarios gracias a la instalación de dos lectores faciales exclusivos para residentes (uno de ingreso y uno de salida), lo que facilita el reconocimiento sin requerir esperas por personas que se encuentren en proceso de registro y autorización para ingresar, quienes se anuncian separados de la puerta principal y mediante un lector facial destinado únicamente a su control y registro.",
     currentPain:
       "Hoy el guarda debe abrir manualmente para cada domicilio y los residentes dependen de que esté en recepción para entrar o salir.",
     solutionFlow: [
@@ -217,7 +230,7 @@ export const BUILDING_ZONES: BuildingZone[] = [
     hardwareSummary: [
       { label: "Lectores Faciales", quantity: "3 equipos (Entrada, Domicilios y Salida)" },
       { label: "Cierre Automático", quantity: "Electroimán y brazo hidráulico en puerta principal" },
-      { label: "Puesto de Portería", quantity: "Monitor 32\" uso continuo + 2 portátiles" },
+      { label: "Puesto de Portería", quantity: "3 monitores para visualización de cámaras actuales y nuevas junto con un portátil para la gestión de registro de visitantes" },
     ],
     gallery: [
       {
@@ -710,33 +723,133 @@ export const COMMERCIAL_TERMS = {
   paymentScheme: [
     {
       step: "01",
-      percentage: "50%",
+      percentage: "50% o 60%",
       title: "Anticipo para Inicio de Obra",
       amount: FINANCIAL_SUMMARY.advance50Percent,
-      note: "Aplica para valores mayores a $500.000 antes de IVA. Da inicio al despacho de equipos y programación de la instalación.",
+      note: "Aplica para valores mayores a $500.000 antes de IVA (pago del 50% o 60% del valor total del proyecto según acuerdo de inicio). Activa la compra de equipos y el cronograma.",
     },
     {
       step: "02",
-      percentage: "50%",
+      percentage: "Saldo",
       title: "Saldo Contraentrega a Satisfacción",
       amount: FINANCIAL_SUMMARY.balance50Percent,
-      note: "Se paga al finalizar la instalación, activar el sistema en portería y realizar las pruebas a satisfacción con la administración.",
+      note: "El saldo a contraentrega, al finalizar la instalación, activar el sistema en portería y realizar las pruebas a satisfacción con la administración.",
     },
   ],
   warranty: {
-    duration: "1 Año de Garantía Oficial",
+    duration: "Equipos 2 Años · Instalación 1 Año",
     description:
-      "Los equipos suministrados cuentan con garantía por un (1) año a partir de su instalación a satisfacción del cliente.",
+      "Los equipos suministrados cuentan con garantía por dos (2) años de fábrica (Hikvision) y garantía de instalaciones / mano de obra por un (1) año, contados a partir de su entrega a satisfacción del cliente.",
     exclusions:
-      "La garantía no incluye daños ocasionados por fluctuaciones eléctricas ni manipulación de equipos por parte de terceros sin previa autorización de Seguridad Explorer LTDA y/o IngExpertos.",
+      "La garantía no incluye daños por fluctuaciones eléctricas ni manipulación de equipos por parte de terceros sin previa autorización de Seguridad Explorer LTDA y/o IngExpertos.",
   },
   validity: {
     days: 20,
     description:
-      "Esta cotización tiene una validez de veinte (20) días calendario a partir de la fecha de envío.",
+      "El saldo se paga a contraentrega. Esta cotización tiene una validez de veinte (20) días calendario a partir de la fecha de envío.",
   },
   rawLegalNote:
-    "El proyecto dará inicio con el pago de anticipo por el 50% del valor total a pagar (aplica para valores mayores a $500.000 antes de IVA). El saldo a contraentrega. Esta cotización tiene una validez de 20 días a partir de la fecha de envío. Equipos suministrados cuentan con garantía por un año a partir de su instalación a satisfacción del cliente. Garantía no incluye daños por fluctuaciones eléctricas ni manipulación de equipos por parte de terceros, sin previa autorización de Seguridad Explorer LTDA y/o IngExpertos.",
+    "El proyecto dará inicio con el pago de anticipo del 50% o 60% del valor total a pagar (aplica para valores mayores a $500.000 antes de IVA). El saldo a contraentrega. Esta cotización tiene una validez de 20 días a partir de la fecha de envío. Equipos suministrados cuentan con garantía por dos años (Hikvision) y garantía de instalaciones por 1 año a partir de su entrega a satisfacción del cliente. Garantía no incluye daños por fluctuaciones eléctricas ni manipulación de equipos por parte de terceros, sin previa autorización de Seguridad Explorer LTDA y/o IngExpertos.",
+} as const;
+
+export const IMPLEMENTATION_SCHEDULE = {
+  totalWeeks: 4,
+  totalDays: 28,
+  defaultStartDate: "2026-11-16",
+  introNote:
+    "La implementación toma 4 semanas calendario. Una vez reunida toda la documentación de inicio, se comenzará el proceso de compra de equipos y el avance paulatino de la instalación según el cronograma.",
+  storageNote:
+    "Entregaremos los equipos y materiales al edificio, el cual debe disponer de un área segura y controlada donde puedan permanecer resguardados mientras se ejecuta la instalación.",
+  startRequirements: [
+    "Contrato firmado.",
+    "Otro sí firmado.",
+    "Aceptación de la propuesta económica adjunta.",
+    "Habeas Data impreso de las personas que se van a enrolar.",
+    "Pago del 50% o 60% del valor total del proyecto.",
+  ],
+  weeks: [
+    {
+      weekNumber: 1,
+      title: "Compra, Recibo y Organización de Equipos",
+      startDayOffset: 0,
+      endDayOffset: 6,
+      deliverable: "Acta semanal de avance #1 e inventario en sitio",
+      activities: [
+        "Verificación de los 5 requisitos de inicio y aprobación de la hoja de ruta de actividades.",
+        "Compra, recibo y organización de equipos y elementos requeridos para la infraestructura.",
+        "Entrega e ingreso de equipos y materiales al área segura y controlada asignada por el edificio.",
+      ],
+    },
+    {
+      weekNumber: 2,
+      title: "Infraestructura, Cableado y Adecuación de Ventanilla",
+      startDayOffset: 7,
+      endDayOffset: 13,
+      deliverable: "Acta semanal de avance #2 y ventanilla adecuada",
+      activities: [
+        "Tendido de tubería metálica EMT, cableado 100% cobre e instalación de distribuidores de red en sótanos y recepción.",
+        "Adecuación de la ventanilla segura de domicilios realizada por IngExpertos como valor agregado (una vez aprobada la hoja de ruta).",
+        "Preparación de bases eléctricas y puntos de fijación para puertas y pedestales existentes.",
+      ],
+    },
+    {
+      weekNumber: 3,
+      title: "Montaje de Equipos, Ciberseguridad y Registro Inicial",
+      startDayOffset: 14,
+      endDayOffset: 20,
+      deliverable: "Acta semanal de avance #3 y jornadas 1 y 2 de registro",
+      activities: [
+        "Instalación de los 14 lectores faciales, protectores metálicos, electroimanes, brazos hidráulicos, esclusa, botones sin contacto/emergencia y cámaras de placas.",
+        "Montaje del puesto de portería (monitores, portátil, grabador NVR y plantas UPS) y aplicación del protocolo de ciberseguridad (último firmware estable y cambio total de contraseñas de fábrica).",
+        "Realización de las Jornadas 1 y 2 de registro facial (4 horas cada una) para residentes que tengan su Habeas Data impreso al día.",
+      ],
+    },
+    {
+      weekNumber: 4,
+      title: "Registro Final, Capacitación y Entrega del Proyecto",
+      startDayOffset: 21,
+      endDayOffset: 27,
+      deliverable: "Acta de entrega final #4 y carpeta técnica completa",
+      activities: [
+        "Jornada 3 de registro facial (4 horas) con capacitación en la última jornada a la administración y al equipo de seguridad para realizar registros posteriores.",
+        "Dos sesiones de capacitación técnica formal (personal de vigilancia y administración) y pruebas integrales de alertas en pantalla y relés.",
+        "Entrega de planos récord (as-built), manuales de usuario, licenciamiento HikCentral a nombre del Edificio Domus, sobre sellado con claves y fichas técnicas de fábrica.",
+      ],
+    },
+  ] as ScheduleWeek[],
+  commitments: {
+    enrollmentSessions: {
+      title: "3 Jornadas de Registro (4 horas c/u)",
+      description:
+        "Se realizarán 3 jornadas de 4 horas para registrar a las personas que tengan su Habeas Data impreso al día; en la última jornada se capacitará a la administración y al equipo de seguridad para realizar sus registros posteriores. Cada semana se entregará acta de avance.",
+    },
+    addedValueWindow: {
+      title: "Adecuación de Ventanilla (Valor Agregado)",
+      description:
+        "IngExpertos realizará la gestión y adecuación de la ventanilla de domicilios como valor agregado sin costo adicional, una vez sea aprobada la hoja de ruta de actividades.",
+    },
+    cybersecurity: {
+      title: "Compromiso de Ciberseguridad por Escrito",
+      description:
+        "IngExpertos asume por escrito la instalación de la última versión estable de firmware en todos los dispositivos, el cambio total de contraseñas de fábrica por claves robustas entregadas en sobre sellado a la administración y revisiones periódicas de actualización durante la garantía.",
+    },
+    postSaleSupport: {
+      title: "Soporte Técnico Posventa Preferencial",
+      priceLabel: "$300.000 COP / mes",
+      description:
+        "Servicio exclusivo para clientes con tarifa preferencial por una mensualidad de $300.000 COP, que incluye atención inmediata ante contingencias y reemplazo de piezas o componentes de hasta $100.000 COP sin costo adicional.",
+    },
+    projectCloseout: {
+      title: "Entregables de Cierre y Fichas Técnicas",
+      description:
+        "Incluye planos récord (as-built) de ubicación de equipos y cableado, manuales de usuario, licenciamiento de HikCentral registrado formalmente a nombre del Edificio Domus, acta de entrega de credenciales y dos sesiones de capacitación técnica (vigilancia y administración). Las fichas técnicas oficiales de fábrica de todos los equipos serán entregadas en idioma inglés o español, según disponibilidad del fabricante.",
+    },
+    alertsAndSiren: {
+      title: "Alertas en Portería y Sirena Opcional",
+      description:
+        "La plataforma HikCentral Professional gestiona las alertas de cruce de línea y analítica de video mediante ventanas emergentes automáticas en pantalla, alarmas sonoras directas en el monitor de portería y notificaciones al personal de seguridad. No obstante, si el Consejo requiere la sirena estroboscópica física audible en el puesto de guardia, se suministra conectada a las salidas de relé del sistema.",
+    },
+  },
 } as const;
 
 const copFormatter = new Intl.NumberFormat("es-CO", {

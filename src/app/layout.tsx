@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     index: false,
     follow: false,
   },
+  other: {
+    "text-scale": "scale",
+  },
 };
 
 export default function RootLayout({
