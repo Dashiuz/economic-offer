@@ -13,7 +13,6 @@ import {
 import {
   ArrowRight,
   ExternalLink,
-  FileText,
   Filter,
   LayoutGrid,
   Search,
@@ -117,6 +116,11 @@ export default function FinancialProposal() {
     [filteredItems]
   );
 
+  const hasDatasheetLinks = useMemo(
+    () => QUOTE_ITEMS.some((item) => Boolean(item.datasheetUrl)),
+    []
+  );
+
   const openCategoryDetail = (categoryId: CategoryId) => {
     setSelectedCategory(categoryId);
     setSearchQuery("");
@@ -126,7 +130,7 @@ export default function FinancialProposal() {
   return (
     <MotionConfig reducedMotion="user">
       <section id="inversion" className="relative py-16 sm:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="domus-container">
           {/* Header + View Switcher */}
           <motion.div
             initial={{ opacity: 0, y: 18 }}
@@ -136,30 +140,30 @@ export default function FinancialProposal() {
             className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end"
           >
             <div>
-              <p className="text-xs font-semibold tracking-[0.22em] text-[#D4AF37] uppercase">
+              <p className="text-xs font-semibold tracking-[0.22em] text-[#D4AF37] uppercase sm:text-sm">
                 Propuesta Económica Oficial · #{QUOTE_METADATA.quoteNumber}
               </p>
-              <h2 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-slate-50 sm:text-4xl">
+              <h2 className="mt-2 text-3xl font-bold tracking-[-0.03em] text-slate-50 sm:text-4xl lg:text-[2.65rem]">
                 Resumen Económico y Detalle de Cotización
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-400 sm:text-base">
+              <p className="mt-3 max-w-3xl text-base leading-relaxed text-slate-400 sm:text-lg">
                 Revise la inversión agrupada por capítulos para toma de
                 decisiones o consulte el listado completo de los 27 ítems
-                cotizados con cantidades, precios y fichas técnicas.
+                cotizados con cantidades y precios.
               </p>
             </div>
 
             <div
               role="tablist"
               aria-label="Modo de visualización financiera"
-              className="no-print inline-flex rounded-xl border border-white/10 bg-[#12141D] p-1"
+              className="no-print inline-flex shrink-0 rounded-xl border border-white/10 bg-[#12141D] p-1.5"
             >
               <button
                 type="button"
                 role="tab"
                 aria-selected={viewMode === "executive"}
                 onClick={() => setViewMode("executive")}
-                className={`relative inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition sm:text-sm ${
+                className={`relative inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition sm:text-base ${
                   viewMode === "executive"
                     ? "bg-[#D4AF37]/20 text-[#F3E5AB]"
                     : "text-slate-400 hover:text-slate-200"
@@ -181,7 +185,7 @@ export default function FinancialProposal() {
                 role="tab"
                 aria-selected={viewMode === "detailed"}
                 onClick={() => setViewMode("detailed")}
-                className={`relative inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition sm:text-sm ${
+                className={`relative inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition sm:text-base ${
                   viewMode === "detailed"
                     ? "bg-[#D4AF37]/20 text-[#F3E5AB]"
                     : "text-slate-400 hover:text-slate-200"
@@ -201,41 +205,47 @@ export default function FinancialProposal() {
           </motion.div>
 
           {/* Top Financial KPI Summary Strip */}
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <div className="luxury-card rounded-2xl p-6">
-              <span className="text-xs font-medium tracking-wider text-slate-400 uppercase">
-                Subtotal Antes de IVA (27 Ítems)
-              </span>
-              <div className="mt-2 text-2xl font-bold text-slate-100 sm:text-3xl">
-                <AnimatedCurrency value={FINANCIAL_SUMMARY.subtotal} />
+          <div className="print-cols-3 mt-8 grid items-stretch gap-5 md:grid-cols-3">
+            <div className="luxury-card flex flex-col justify-between rounded-2xl p-6">
+              <div>
+                <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase sm:text-sm">
+                  Subtotal Antes de IVA (27 Ítems)
+                </span>
+                <div className="mt-2.5 text-2xl font-bold text-slate-100 sm:text-3xl lg:text-4xl">
+                  <AnimatedCurrency value={FINANCIAL_SUMMARY.subtotal} />
+                </div>
               </div>
-              <p className="mt-1.5 text-xs text-slate-400">
+              <p className="mt-2 text-sm text-slate-400">
                 Equipos, licencias permanentes, materiales e instalación completa
               </p>
             </div>
 
-            <div className="luxury-card rounded-2xl p-6">
-              <span className="text-xs font-medium tracking-wider text-slate-400 uppercase">
-                IVA (19%)
-              </span>
-              <div className="mt-2 text-2xl font-bold text-[#38BDF8] sm:text-3xl">
-                <AnimatedCurrency
-                  value={Math.round(FINANCIAL_SUMMARY.ivaAmount)}
-                />
+            <div className="luxury-card flex flex-col justify-between rounded-2xl p-6">
+              <div>
+                <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase sm:text-sm">
+                  IVA (19%)
+                </span>
+                <div className="mt-2.5 text-2xl font-bold text-[#38BDF8] sm:text-3xl lg:text-4xl">
+                  <AnimatedCurrency
+                    value={Math.round(FINANCIAL_SUMMARY.ivaAmount)}
+                  />
+                </div>
               </div>
-              <p className="mt-1.5 font-mono text-xs text-slate-400 tabular-nums">
+              <p className="mt-2 font-mono text-sm text-slate-400 tabular-nums">
                 Cálculo exacto: {formatCOP(FINANCIAL_SUMMARY.ivaAmount, true)}
               </p>
             </div>
 
-            <div className="luxury-card rounded-2xl border-[#D4AF37]/40 bg-gradient-to-br from-[#D4AF37]/15 via-[#12141D] to-[#12141D] p-6">
-              <span className="text-xs font-semibold tracking-wider text-[#F3E5AB] uppercase">
-                Inversión Total del Proyecto
-              </span>
-              <div className="text-gold-gradient mt-2 text-3xl font-bold sm:text-4xl">
-                <AnimatedCurrency value={Math.round(FINANCIAL_SUMMARY.total)} />
+            <div className="luxury-card flex flex-col justify-between rounded-2xl border-[#D4AF37]/40 bg-gradient-to-br from-[#D4AF37]/15 via-[#12141D] to-[#12141D] p-6">
+              <div>
+                <span className="text-xs font-bold tracking-wider text-[#F3E5AB] uppercase sm:text-sm">
+                  Inversión Total del Proyecto
+                </span>
+                <div className="text-gold-gradient mt-2.5 text-3xl font-bold sm:text-4xl lg:text-[2.5rem]">
+                  <AnimatedCurrency value={Math.round(FINANCIAL_SUMMARY.total)} />
+                </div>
               </div>
-              <p className="mt-1.5 font-mono text-xs text-slate-300 tabular-nums">
+              <p className="mt-2 font-mono text-sm text-slate-300 tabular-nums">
                 COP · Exacto: {formatCOP(FINANCIAL_SUMMARY.total, true)}
               </p>
             </div>
@@ -251,16 +261,16 @@ export default function FinancialProposal() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                  className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+                  className="print-cols-2 grid items-stretch gap-5 md:grid-cols-2 lg:grid-cols-3"
                 >
                   {categorySummaries.map((cat) => (
                     <article
                       key={cat.id}
-                      className="luxury-card flex flex-col justify-between rounded-2xl p-6"
+                      className="luxury-card flex h-full flex-col justify-between rounded-2xl p-6"
                     >
                       <div>
                         <div className="flex items-center justify-between gap-2">
-                          <span className="inline-flex items-center gap-2 text-xs font-semibold text-slate-300">
+                          <span className="inline-flex items-center gap-2 text-xs font-semibold text-slate-300 sm:text-sm">
                             <span
                               className={`h-2.5 w-2.5 rounded-full ${
                                 ACCENT_DOT[cat.accent]
@@ -269,30 +279,30 @@ export default function FinancialProposal() {
                             {cat.itemCount}{" "}
                             {cat.itemCount === 1 ? "ítem" : "ítems"}
                           </span>
-                          <span className="font-mono text-xs text-slate-400 tabular-nums">
+                          <span className="font-mono text-xs text-slate-400 tabular-nums sm:text-sm">
                             {cat.sharePct.toFixed(1)}% del subtotal
                           </span>
                         </div>
 
-                        <h3 className="mt-3 text-lg font-bold text-slate-50">
+                        <h3 className="mt-3 text-lg font-bold text-slate-50 sm:text-xl">
                           {cat.name}
                         </h3>
-                        <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                        <p className="mt-2 text-[15px] leading-relaxed text-slate-400 sm:text-base">
                           {cat.tagline}
                         </p>
                       </div>
 
                       <div className="mt-6">
                         <div className="flex items-baseline justify-between gap-2">
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-slate-400 sm:text-sm">
                             Subtotal capítulo
                           </span>
-                          <span className="font-mono text-xl font-bold text-slate-100 tabular-nums">
+                          <span className="font-mono text-xl font-bold text-slate-100 tabular-nums sm:text-2xl">
                             {formatCOP(cat.subtotal)}
                           </span>
                         </div>
                         {/* Proportional Share Bar */}
-                        <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                        <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-white/10">
                           <div
                             className={`h-full rounded-full bg-gradient-to-r ${
                               ACCENT_BAR[cat.accent]
@@ -304,34 +314,34 @@ export default function FinancialProposal() {
                         <button
                           type="button"
                           onClick={() => openCategoryDetail(cat.id)}
-                          className="no-print mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-[#F3E5AB] transition hover:text-[#D4AF37]"
+                          className="no-print mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#F3E5AB] transition hover:text-[#D4AF37]"
                         >
                           Ver ítems de este capítulo
-                          <ArrowRight className="h-3.5 w-3.5" />
+                          <ArrowRight className="h-4 w-4" />
                         </button>
                       </div>
                     </article>
                   ))}
 
                   {/* Quick CTA Card to full table */}
-                  <article className="luxury-card no-print flex flex-col justify-between rounded-2xl border-dashed border-[#D4AF37]/30 bg-[#12141D]/50 p-6">
+                  <article className="luxury-card no-print flex h-full flex-col justify-between rounded-2xl border-dashed border-[#D4AF37]/30 bg-[#12141D]/50 p-6">
                     <div>
-                      <span className="font-mono text-xs font-semibold tracking-wider text-[#D4AF37] uppercase">
+                      <span className="font-mono text-xs font-semibold tracking-wider text-[#D4AF37] uppercase sm:text-sm">
                         Detalle Completo
                       </span>
-                      <h3 className="mt-3 text-lg font-bold text-slate-50">
+                      <h3 className="mt-3 text-lg font-bold text-slate-50 sm:text-xl">
                         Ver los 27 Ítems de la Cotización #
                         {QUOTE_METADATA.quoteNumber}
                       </h3>
-                      <p className="mt-2 text-sm leading-relaxed text-slate-400">
-                        Busque fácilmente por nombre de equipo, revise
-                        cantidades, valores unitarios y fichas disponibles.
+                      <p className="mt-2 text-[15px] leading-relaxed text-slate-400 sm:text-base">
+                        Busque fácilmente por nombre de equipo o referencia y
+                        revise cantidades y valores unitarios.
                       </p>
                     </div>
                     <button
                       type="button"
                       onClick={() => setViewMode("detailed")}
-                      className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl border border-[#D4AF37]/50 bg-[#D4AF37]/15 px-4 py-3 text-sm font-semibold text-[#F3E5AB] transition hover:bg-[#D4AF37]/25"
+                      className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl border border-[#D4AF37]/50 bg-[#D4AF37]/15 px-5 py-3.5 text-base font-semibold text-[#F3E5AB] transition hover:bg-[#D4AF37]/25"
                     >
                       <Table2 className="h-4 w-4" />
                       Abrir Tabla Completa
@@ -407,10 +417,10 @@ export default function FinancialProposal() {
                     aria-labelledby={tableCaptionId}
                     className="quote-table-region rounded-2xl border border-white/8"
                   >
-                    <table className="quote-responsive-table w-full border-collapse text-left text-sm">
+                    <table className="quote-responsive-table w-full border-collapse text-left text-sm sm:text-[15px]">
                       <caption
                         id={tableCaptionId}
-                        className="border-b border-white/8 bg-[#090A0F]/60 px-4 py-3 text-left text-xs text-slate-400"
+                        className="border-b border-white/8 bg-[#090A0F]/60 px-4 py-3.5 text-left text-xs text-slate-400 sm:text-sm"
                       >
                         Mostrando{" "}
                         <strong className="font-mono text-slate-200">
@@ -421,7 +431,7 @@ export default function FinancialProposal() {
                           {formatCOP(filteredSubtotal)}
                         </strong>
                       </caption>
-                      <thead className="bg-[#090A0F]/80 text-xs tracking-wider text-slate-400 uppercase">
+                      <thead className="bg-[#090A0F]/80 text-xs tracking-wider text-slate-400 uppercase sm:text-sm">
                         <tr>
                           <th scope="col" className="px-4 py-3.5">
                             #
@@ -441,9 +451,11 @@ export default function FinancialProposal() {
                           <th scope="col" className="px-4 py-3.5 text-right">
                             Valor Total
                           </th>
-                          <th scope="col" className="px-4 py-3.5 text-center">
-                            Ficha
-                          </th>
+                          {hasDatasheetLinks ? (
+                            <th scope="col" className="px-4 py-3.5 text-center">
+                              Ficha
+                            </th>
+                          ) : null}
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/8">
@@ -503,39 +515,33 @@ export default function FinancialProposal() {
                             >
                               {formatCOP(item.totalPrice)}
                             </td>
-                            <td
-                              data-label="Ficha Técnica"
-                              className="px-4 py-3.5 text-center"
-                            >
-                              {item.datasheetUrl ? (
-                                <a
-                                  href={item.datasheetUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 rounded-lg border border-[#38BDF8]/40 bg-[#38BDF8]/10 px-2.5 py-1 text-xs font-semibold text-[#38BDF8] transition hover:bg-[#38BDF8]/20"
-                                >
-                                  PDF
-                                  <ExternalLink className="h-3 w-3" />
-                                </a>
-                              ) : item.datasheetLabel ? (
-                                <a
-                                  href="#condiciones"
-                                  className="inline-flex items-center gap-1 rounded-lg border border-white/12 bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-[#D4AF37]/40 hover:text-[#F3E5AB]"
-                                >
-                                  <FileText className="h-3 w-3 text-[#D4AF37]" />
-                                  Solicitar PDF
-                                </a>
-                              ) : (
-                                <span className="text-xs text-slate-600">—</span>
-                              )}
-                            </td>
+                            {hasDatasheetLinks ? (
+                              <td
+                                data-label="Ficha Técnica"
+                                className="px-4 py-3.5 text-center"
+                              >
+                                {item.datasheetUrl ? (
+                                  <a
+                                    href={item.datasheetUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 rounded-lg border border-[#38BDF8]/40 bg-[#38BDF8]/10 px-2.5 py-1 text-xs font-semibold text-[#38BDF8] transition hover:bg-[#38BDF8]/20"
+                                  >
+                                    PDF
+                                    <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                ) : (
+                                  <span className="text-xs text-slate-600">—</span>
+                                )}
+                              </td>
+                            ) : null}
                           </tr>
                         ))}
 
                         {filteredItems.length === 0 ? (
                           <tr>
                             <td
-                              colSpan={7}
+                              colSpan={hasDatasheetLinks ? 7 : 6}
                               className="px-4 py-10 text-center text-sm text-slate-400"
                             >
                               No se encontraron ítems que coincidan con &ldquo;
