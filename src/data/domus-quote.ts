@@ -464,6 +464,8 @@ export const QUOTE_ITEMS: QuoteItem[] = [
     totalPrice: 519415,
     category: "biometria-acceso",
     imagePath: "/images/products/electroiman-600.webp",
+    datasheetLabel: "Ficha Técnica Platina DS-K4H255-LZ",
+    datasheetUrl: "/specs/ds-k4h255-lz.pdf",
   },
   {
     id: 5,
@@ -485,6 +487,7 @@ export const QUOTE_ITEMS: QuoteItem[] = [
     category: "infraestructura-ups",
     imagePath: "/images/products/ups-3kva.webp",
     datasheetLabel: "Ficha Técnica UPS 3KVA",
+    datasheetUrl: "/specs/ds-ups3000-x.pdf",
     highlight: true,
   },
   {
@@ -496,6 +499,8 @@ export const QUOTE_ITEMS: QuoteItem[] = [
     totalPrice: 250000,
     category: "biometria-acceso",
     imagePath: "/images/products/boton-notouch.webp",
+    datasheetLabel: "Ficha Técnica Botón Sin Contacto DS-K7P07",
+    datasheetUrl: "/specs/ds-k7p07.pdf",
   },
   {
     id: 8,
@@ -506,6 +511,8 @@ export const QUOTE_ITEMS: QuoteItem[] = [
     totalPrice: 240898,
     category: "lpr-videovigilancia",
     imagePath: "/images/products/camara-colorvu.webp",
+    datasheetLabel: "Ficha Técnica Cámara ColorVu DS-2CD1327G3-LIU",
+    datasheetUrl: "/specs/ds-2cd1327g3-liu.pdf",
   },
   {
     id: 9,
@@ -517,6 +524,7 @@ export const QUOTE_ITEMS: QuoteItem[] = [
     category: "lpr-videovigilancia",
     imagePath: "/images/products/camara-lpr.webp",
     datasheetLabel: "Ficha Técnica LPR 4MP",
+    datasheetUrl: "/specs/ds-tcg405-e.pdf",
     highlight: true,
   },
   {
@@ -531,14 +539,15 @@ export const QUOTE_ITEMS: QuoteItem[] = [
   },
   {
     id: 11,
-    ref: "DS-K1T342MFWX-E1",
-    description: "Terminal Reconocimiento Facial IP65, WiFi/PoE, 1.500 rostros, 3.000 huellas/tarjetas",
+    ref: "DS-K1T344MBFWX-E1",
+    description: "Terminal Reconocimiento Facial IP65, WiFi/PoE, 3.000 rostros, 3.000 huellas/tarjetas",
     quantity: 14,
     unitPrice: 720292,
     totalPrice: 10084088,
     category: "biometria-acceso",
     imagePath: "/images/products/terminal-facial.webp",
     datasheetLabel: "Ficha Técnica Terminal Facial",
+    datasheetUrl: "/specs/ds-k1t344mbfwx-e1.pdf",
     highlight: true,
   },
   {
@@ -584,7 +593,7 @@ export const QUOTE_ITEMS: QuoteItem[] = [
   },
   {
     id: 16,
-    ref: "DS-7616NI-Q2/16P",
+    ref: "DS-7616NXI-K2/16P VPro",
     description: "Videograbador NVR 8MP (4K) / 16 Canales IP / 16 Puertos PoE+ (150W) / H.265+",
     quantity: 1,
     unitPrice: 1513701,
@@ -592,6 +601,7 @@ export const QUOTE_ITEMS: QuoteItem[] = [
     category: "lpr-videovigilancia",
     imagePath: "/images/products/nvr-16ch.webp",
     datasheetLabel: "Ficha Técnica NVR 4K",
+    datasheetUrl: "/specs/ds-7616nxi-k2-16p-vpro.pdf",
     highlight: true,
   },
   {
@@ -607,7 +617,7 @@ export const QUOTE_ITEMS: QuoteItem[] = [
   {
     id: 18,
     ref: "Caja Acme León 20x20x12",
-    description: "Caja plástica de paso 20 x 20 x 12 cm para protección de conexiones",
+    description: "Caja metálica de paso 20 x 20 x 12 cm para protección de conexiones",
     quantity: 7,
     unitPrice: 45927,
     totalPrice: 321489,
@@ -712,28 +722,85 @@ export const QUOTE_ITEMS: QuoteItem[] = [
 
 export const FINANCIAL_SUMMARY = {
   subtotal: 60593946,
+  discountRate: 0.06,
+  discountAmount: 3635636.76,
+  discountedSubtotal: 56958309.24,
   ivaRate: 0.19,
-  ivaAmount: 11512849.74,
-  total: 72106795.74,
+  ivaAmount: 10822078.7556,
+  total: 67780387.9956,
+  standardIvaAmount: 11512849.74,
+  standardTotal: 72106795.74,
+  totalSavings: 4326407.7444,
   advance50Percent: 36053397.87,
   balance50Percent: 36053397.87,
+  advance70Percent: 47446271.59692,
+  balance30Percent: 20334116.39868,
+} as const;
+
+export const CLARIFICATIONS = {
+  priorityLabel: "PRIORIDAD PARA EL CONSEJO",
+  items: [
+    {
+      number: 1,
+      text: "No se pederá el descuento por pronto pago (6 % antes de IVA) siempre y cuando se cancele el 70% de total del proyecto",
+    },
+  ],
 } as const;
 
 export const COMMERCIAL_TERMS = {
-  paymentScheme: [
+  paymentOptions: [
     {
-      step: "01",
-      percentage: "50% o 60%",
-      title: "Anticipo para Inicio de Obra",
-      amount: FINANCIAL_SUMMARY.advance50Percent,
-      note: "Aplica para valores mayores a $500.000 antes de IVA (pago del 50% o 60% del valor total del proyecto según acuerdo de inicio). Activa la compra de equipos y el cronograma.",
+      id: "estandar-50-50",
+      badge: "50% / 50%",
+      title: "Modalidad Estándar (Sin Descuento)",
+      subtitle: "Mantiene los valores oficiales sin descuento del 6% antes de IVA",
+      hasDiscount: false,
+      totalAmount: FINANCIAL_SUMMARY.standardTotal,
+      ivaAmount: FINANCIAL_SUMMARY.standardIvaAmount,
+      phases: [
+        {
+          step: "01",
+          percentage: "50%",
+          title: "Anticipo para Inicio de Obra",
+          amount: FINANCIAL_SUMMARY.advance50Percent,
+          note: "Aplica para valores mayores a $500.000 antes de IVA (pago del 50% del total del proyecto). Activa la compra de equipos y el cronograma.",
+        },
+        {
+          step: "02",
+          percentage: "50%",
+          title: "Saldo Contraentrega a Satisfacción",
+          amount: FINANCIAL_SUMMARY.balance50Percent,
+          note: "El 50% restante se paga a contraentrega al finalizar la instalación, activar el sistema en portería y aprobar las pruebas.",
+        },
+      ],
     },
     {
-      step: "02",
-      percentage: "Saldo",
-      title: "Saldo Contraentrega a Satisfacción",
-      amount: FINANCIAL_SUMMARY.balance50Percent,
-      note: "El saldo a contraentrega, al finalizar la instalación, activar el sistema en portería y realizar las pruebas a satisfacción con la administración.",
+      id: "pronto-pago-70-30",
+      badge: "70% / 30% · DTO. 6%",
+      title: "Modalidad Pronto Pago (Descuento 6%)",
+      subtitle: "Descuento del 6% antes de IVA aplicado al subtotal oficial",
+      hasDiscount: true,
+      discountAmount: FINANCIAL_SUMMARY.discountAmount,
+      discountedSubtotal: FINANCIAL_SUMMARY.discountedSubtotal,
+      ivaAmount: FINANCIAL_SUMMARY.ivaAmount,
+      totalAmount: FINANCIAL_SUMMARY.total,
+      savingsAmount: FINANCIAL_SUMMARY.totalSavings,
+      phases: [
+        {
+          step: "01",
+          percentage: "70%",
+          title: "Anticipo Pronto Pago para Inicio",
+          amount: FINANCIAL_SUMMARY.advance70Percent,
+          note: "Cancelando el 70% del total del proyecto se conserva el descuento por pronto pago del 6% antes de IVA.",
+        },
+        {
+          step: "02",
+          percentage: "30%",
+          title: "Saldo Contraentrega a Satisfacción",
+          amount: FINANCIAL_SUMMARY.balance30Percent,
+          note: "El 30% restante se cancela a contraentrega al finalizar la instalación, activar el sistema y aprobar las pruebas.",
+        },
+      ],
     },
   ],
   warranty: {
@@ -749,7 +816,7 @@ export const COMMERCIAL_TERMS = {
       "El saldo se paga a contraentrega. Esta cotización tiene una validez de veinte (20) días calendario a partir de la fecha de envío.",
   },
   rawLegalNote:
-    "El proyecto dará inicio con el pago de anticipo del 50% o 60% del valor total a pagar (aplica para valores mayores a $500.000 antes de IVA). El saldo a contraentrega. Esta cotización tiene una validez de 20 días a partir de la fecha de envío. Equipos suministrados cuentan con garantía por dos años (Hikvision) y garantía de instalaciones por 1 año a partir de su entrega a satisfacción del cliente. Garantía no incluye daños por fluctuaciones eléctricas ni manipulación de equipos por parte de terceros, sin previa autorización de Seguridad Explorer LTDA y/o IngExpertos.",
+    "El proyecto dará inicio con el pago de anticipo del 50% (modalidad estándar sin descuento) o del 70% (modalidad pronto pago con descuento del 6% antes de IVA, aplica para valores mayores a $500.000 antes de IVA). El saldo a contraentrega. Esta cotización tiene una validez de 20 días a partir de la fecha de envío. Equipos suministrados cuentan con garantía por dos años (Hikvision) y garantía de instalaciones por 1 año a partir de su entrega a satisfacción del cliente. Garantía no incluye daños por fluctuaciones eléctricas ni manipulación de equipos por parte de terceros, sin previa autorización de Seguridad Explorer LTDA y/o IngExpertos.",
 } as const;
 
 export const IMPLEMENTATION_SCHEDULE = {
@@ -765,7 +832,7 @@ export const IMPLEMENTATION_SCHEDULE = {
     "Otro sí firmado.",
     "Aceptación de la propuesta económica adjunta.",
     "Habeas Data impreso de las personas que se van a enrolar.",
-    "Pago del 50% o 60% del valor total del proyecto.",
+    "Pago del anticipo del proyecto (50% en modalidad estándar o 70% para descuento del 6% por pronto pago).",
   ],
   weeks: [
     {

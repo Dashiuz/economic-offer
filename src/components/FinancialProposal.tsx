@@ -13,6 +13,7 @@ import {
 import {
   ArrowRight,
   ExternalLink,
+  FileText,
   Filter,
   LayoutGrid,
   Search,
@@ -27,7 +28,13 @@ import {
   QUOTE_METADATA,
 } from "@/data/domus-quote";
 
-function AnimatedCurrency({ value }: { value: number }) {
+function AnimatedCurrency({
+  value,
+  prefix = "",
+}: {
+  value: number;
+  prefix?: string;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.35 });
   const shouldReduceMotion = useReducedMotion();
@@ -36,24 +43,25 @@ function AnimatedCurrency({ value }: { value: number }) {
     const node = ref.current;
     if (!node || !inView) return;
     if (shouldReduceMotion) {
-      node.textContent = formatCOP(value);
+      node.textContent = `${prefix}${formatCOP(value)}`;
       return;
     }
     const controls = animate(0, value, {
       duration: 1.0,
       ease: [0.16, 1, 0.3, 1],
       onUpdate(latest) {
-        node.textContent = formatCOP(Math.round(latest));
+        node.textContent = `${prefix}${formatCOP(Math.round(latest))}`;
       },
     });
     return () => {
       controls.stop();
-      node.textContent = formatCOP(value);
+      node.textContent = `${prefix}${formatCOP(value)}`;
     };
-  }, [inView, value, shouldReduceMotion]);
+  }, [inView, value, prefix, shouldReduceMotion]);
 
   return (
     <span ref={ref} className="font-mono tabular-nums">
+      {prefix}
       {formatCOP(value)}
     </span>
   );
@@ -149,7 +157,7 @@ export default function FinancialProposal() {
               <p className="mt-3 max-w-3xl text-base leading-relaxed text-slate-400 sm:text-lg">
                 Revise la inversión agrupada por capítulos para toma de
                 decisiones o consulte el listado completo de los 27 ítems
-                cotizados con cantidades y precios.
+                cotizados con cantidades, precios y especificaciones técnicas.
               </p>
             </div>
 
@@ -205,13 +213,13 @@ export default function FinancialProposal() {
           </motion.div>
 
           {/* Top Financial KPI Summary Strip */}
-          <div className="print-cols-3 mt-8 grid items-stretch gap-5 md:grid-cols-3">
+          <div className="print-cols-2 mt-8 grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-4">
             <div className="luxury-card flex flex-col justify-between rounded-2xl p-6">
               <div>
                 <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase sm:text-sm">
                   Subtotal Antes de IVA (27 Ítems)
                 </span>
-                <div className="mt-2.5 text-2xl font-bold text-slate-100 sm:text-3xl lg:text-4xl">
+                <div className="mt-2.5 text-2xl font-bold text-slate-100 sm:text-3xl xl:text-[1.6rem] 2xl:text-[1.95rem]">
                   <AnimatedCurrency value={FINANCIAL_SUMMARY.subtotal} />
                 </div>
               </div>
@@ -220,12 +228,30 @@ export default function FinancialProposal() {
               </p>
             </div>
 
+            <div className="luxury-card flex flex-col justify-between rounded-2xl border-[#10B981]/30 bg-gradient-to-br from-[#10B981]/10 via-[#12141D] to-[#12141D] p-6">
+              <div>
+                <span className="text-xs font-semibold tracking-wider text-[#6EE7B7] uppercase sm:text-sm">
+                  Descuento 6% Antes de IVA
+                </span>
+                <div className="mt-2.5 text-2xl font-bold text-[#10B981] sm:text-3xl xl:text-[1.6rem] 2xl:text-[1.95rem]">
+                  <AnimatedCurrency
+                    value={Math.round(FINANCIAL_SUMMARY.discountAmount)}
+                    prefix="-"
+                  />
+                </div>
+              </div>
+              <p className="mt-2 font-mono text-sm text-slate-300 tabular-nums">
+                Subtotal neto:{" "}
+                {formatCOP(FINANCIAL_SUMMARY.discountedSubtotal)}
+              </p>
+            </div>
+
             <div className="luxury-card flex flex-col justify-between rounded-2xl p-6">
               <div>
                 <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase sm:text-sm">
-                  IVA (19%)
+                  IVA (19% sobre neto)
                 </span>
-                <div className="mt-2.5 text-2xl font-bold text-[#38BDF8] sm:text-3xl lg:text-4xl">
+                <div className="mt-2.5 text-2xl font-bold text-[#38BDF8] sm:text-3xl xl:text-[1.6rem] 2xl:text-[1.95rem]">
                   <AnimatedCurrency
                     value={Math.round(FINANCIAL_SUMMARY.ivaAmount)}
                   />
@@ -241,12 +267,13 @@ export default function FinancialProposal() {
                 <span className="text-xs font-bold tracking-wider text-[#F3E5AB] uppercase sm:text-sm">
                   Inversión Total del Proyecto
                 </span>
-                <div className="text-gold-gradient mt-2.5 text-3xl font-bold sm:text-4xl lg:text-[2.5rem]">
+                <div className="text-gold-gradient mt-2.5 text-2xl font-bold sm:text-3xl xl:text-[1.7rem] 2xl:text-[2.05rem]">
                   <AnimatedCurrency value={Math.round(FINANCIAL_SUMMARY.total)} />
                 </div>
               </div>
               <p className="mt-2 font-mono text-sm text-slate-300 tabular-nums">
-                COP · Exacto: {formatCOP(FINANCIAL_SUMMARY.total, true)}
+                COP · Ahorro con IVA:{" "}
+                {formatCOP(FINANCIAL_SUMMARY.totalSavings)}
               </p>
             </div>
           </div>
@@ -335,7 +362,8 @@ export default function FinancialProposal() {
                       </h3>
                       <p className="mt-2 text-[15px] leading-relaxed text-slate-400 sm:text-base">
                         Busque fácilmente por nombre de equipo o referencia y
-                        revise cantidades y valores unitarios.
+                        revise cantidades, valores unitarios y especificaciones
+                        técnicas en PDF.
                       </p>
                     </div>
                     <button
@@ -452,8 +480,11 @@ export default function FinancialProposal() {
                             Valor Total
                           </th>
                           {hasDatasheetLinks ? (
-                            <th scope="col" className="px-4 py-3.5 text-center">
-                              Ficha
+                            <th
+                              scope="col"
+                              className="no-print px-4 py-3.5 text-center"
+                            >
+                              Especificaciones Técnicas
                             </th>
                           ) : null}
                         </tr>
@@ -517,21 +548,34 @@ export default function FinancialProposal() {
                             </td>
                             {hasDatasheetLinks ? (
                               <td
-                                data-label="Ficha Técnica"
-                                className="px-4 py-3.5 text-center"
+                                data-label="Especificaciones Técnicas"
+                                className="no-print px-4 py-3.5 text-center"
                               >
                                 {item.datasheetUrl ? (
                                   <a
                                     href={item.datasheetUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1 rounded-lg border border-[#38BDF8]/40 bg-[#38BDF8]/10 px-2.5 py-1 text-xs font-semibold text-[#38BDF8] transition hover:bg-[#38BDF8]/20"
+                                    aria-label={`Ver PDF de especificaciones técnicas de ${item.ref} (abre en nueva pestaña)`}
+                                    className="inline-flex min-h-7 items-center gap-1.5 rounded-lg border border-[#38BDF8]/40 bg-[#38BDF8]/10 px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-[#38BDF8] transition hover:bg-[#38BDF8]/20"
                                   >
-                                    PDF
-                                    <ExternalLink className="h-3 w-3" />
+                                    <FileText
+                                      aria-hidden="true"
+                                      className="h-3.5 w-3.5 shrink-0"
+                                    />
+                                    Ver PDF
+                                    <ExternalLink
+                                      aria-hidden="true"
+                                      className="h-3 w-3 shrink-0"
+                                    />
                                   </a>
                                 ) : (
-                                  <span className="text-xs text-slate-600">—</span>
+                                  <span className="text-xs text-slate-400">
+                                    <span aria-hidden="true">—</span>
+                                    <span className="visually-hidden">
+                                      No disponible
+                                    </span>
+                                  </span>
                                 )}
                               </td>
                             ) : null}
