@@ -251,21 +251,23 @@ export default function HeroSection() {
 
               {/* Symmetrical Investment Summary Anchor */}
               <div className="luxury-card print-keep-together flex flex-col justify-between gap-4 rounded-2xl border-[#D4AF37]/35 bg-gradient-to-r from-[#D4AF37]/12 via-[#12141D] to-[#12141D] px-6 py-5 sm:flex-row sm:items-center">
-                <div className="space-y-1">
+                <div className="min-w-0 space-y-1">
                   <span className="block text-xs font-semibold tracking-wider text-[#F3E5AB] uppercase">
-                    Inversión Total IVA Incluido
+                    Inversión Total con Dto. 6% (IVA Incluido)
                   </span>
-                  <p className="font-mono text-sm text-slate-300 tabular-nums">
-                    Subtotal {formatCOP(FINANCIAL_SUMMARY.subtotal)} · IVA 19%{" "}
+                  <p className="font-mono text-xs leading-relaxed text-slate-300 tabular-nums sm:text-[13px]">
+                    Subtotal {formatCOP(FINANCIAL_SUMMARY.subtotal)} · Dto. 6% -
+                    {formatCOP(FINANCIAL_SUMMARY.discountAmount)} · IVA 19%{" "}
                     {formatCOP(Math.round(FINANCIAL_SUMMARY.ivaAmount))}
                   </p>
                 </div>
-                <div className="sm:text-right">
+                <div className="shrink-0 sm:text-right">
                   <span className="text-gold-gradient font-mono text-2xl font-bold tabular-nums sm:text-3xl">
                     {formatCOP(FINANCIAL_SUMMARY.total)}
                   </span>
-                  <span className="block font-mono text-xs text-slate-400">
-                    COP · Validez {QUOTE_METADATA.validityDays} días
+                  <span className="block font-mono text-xs text-slate-400 tabular-nums">
+                    COP · Sin dto. (50/50):{" "}
+                    {formatCOP(FINANCIAL_SUMMARY.standardTotal)}
                   </span>
                 </div>
               </div>

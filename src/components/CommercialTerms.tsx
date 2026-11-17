@@ -34,64 +34,136 @@ export default function CommercialTerms() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-wrap items-end justify-between gap-4"
           >
-            <p className="text-xs font-semibold tracking-[0.22em] text-[#10B981] uppercase sm:text-sm">
-              Condiciones Comerciales y Contacto
-            </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-[-0.03em] text-slate-50 sm:text-4xl lg:text-[2.65rem]">
-              Forma de Pago, Garantía y Atención Directa
-            </h2>
+            <div>
+              <p className="text-xs font-semibold tracking-[0.22em] text-[#10B981] uppercase sm:text-sm">
+                Condiciones Comerciales y Contacto
+              </p>
+              <h2 className="mt-2 text-3xl font-bold tracking-[-0.03em] text-slate-50 sm:text-4xl lg:text-[2.65rem]">
+                Forma de Pago, Garantía y Atención Directa
+              </h2>
+            </div>
+            <span className="rounded-full border border-[#10B981]/30 bg-[#10B981]/10 px-3.5 py-1 font-mono text-xs font-semibold text-[#10B981] sm:text-sm">
+              Sin mensualidades
+            </span>
           </motion.div>
 
-          <div className="print-cols-2 mt-8 grid items-stretch gap-6 lg:grid-cols-12">
-            {/* Payment Timeline + Legal Terms */}
-            <div className="flex flex-col justify-between gap-6 lg:col-span-7">
-              {/* Payment Scheme */}
-              <motion.div
+          {/* Payment Options Comparison Cards (50/50 Standard vs 70/30 with 6% Discount) */}
+          <div className="print-cols-2 mt-8 grid items-stretch gap-6 lg:grid-cols-2">
+            {COMMERCIAL_TERMS.paymentOptions.map((option, idx) => (
+              <motion.article
+                key={option.id}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="luxury-card print-keep-together rounded-3xl p-6 sm:p-8"
+                transition={{
+                  duration: 0.5,
+                  delay: idx * 0.06,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className={`luxury-card print-keep-together flex h-full flex-col justify-between rounded-3xl p-6 sm:p-8 ${
+                  option.hasDiscount
+                    ? "border-[#D4AF37]/40 bg-gradient-to-br from-[#D4AF37]/10 via-[#12141D] to-[#12141D]"
+                    : ""
+                }`}
               >
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#D4AF37]/30 bg-[#D4AF37]/12 text-[#F3E5AB]">
-                      <Wallet className="h-5 w-5" />
-                    </span>
-                    <div>
-                      <h3 className="text-lg font-bold text-slate-50 sm:text-xl">
-                        Forma de Pago
-                      </h3>
-                      <p className="text-sm text-slate-400">
-                        Anticipo inicial y saldo contraentrega a satisfacción
-                      </p>
+                <div>
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${
+                          option.hasDiscount
+                            ? "border-[#D4AF37]/35 bg-[#D4AF37]/15 text-[#F3E5AB]"
+                            : "border-white/15 bg-white/[0.05] text-slate-200"
+                        }`}
+                      >
+                        <Wallet className="h-5 w-5" />
+                      </span>
+                      <div>
+                        <h3 className="text-lg font-bold text-slate-50 sm:text-xl">
+                          {option.title}
+                        </h3>
+                        <p className="text-sm text-slate-400">
+                          {option.subtitle}
+                        </p>
+                      </div>
                     </div>
+                    <span
+                      className={`shrink-0 rounded-full border px-3.5 py-1 font-mono text-xs font-bold sm:text-sm ${
+                        option.hasDiscount
+                          ? "border-[#10B981]/40 bg-[#10B981]/15 text-[#6EE7B7]"
+                          : "border-white/15 bg-white/[0.05] text-slate-200"
+                      }`}
+                    >
+                      {option.badge}
+                    </span>
                   </div>
-                  <span className="rounded-full border border-[#10B981]/30 bg-[#10B981]/10 px-3.5 py-1 font-mono text-xs font-semibold text-[#10B981] sm:text-sm">
-                    Sin mensualidades
-                  </span>
+
+                  {/* Option Summary Strip */}
+                  <div
+                    className={`mt-5 flex flex-wrap items-baseline justify-between gap-2 rounded-2xl border px-4 py-3.5 ${
+                      option.hasDiscount
+                        ? "border-[#D4AF37]/30 bg-[#090A0F]/70"
+                        : "border-white/10 bg-[#090A0F]/65"
+                    }`}
+                  >
+                    <div>
+                      <span className="block text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                        {option.hasDiscount
+                          ? "Total con descuento 6% (IVA incluido)"
+                          : "Total del proyecto sin descuento (IVA incluido)"}
+                      </span>
+                      <span className="mt-0.5 block font-mono text-xs text-slate-300 tabular-nums">
+                        {option.hasDiscount
+                          ? `Dto. 6%: -${formatCOP(option.discountAmount)} · Ahorro con IVA: ${formatCOP(option.savingsAmount)}`
+                          : `Subtotal $ 60.593.946 · IVA 19% ${formatCOP(option.ivaAmount)}`}
+                      </span>
+                    </div>
+                    <span
+                      className={`font-mono text-xl font-bold tabular-nums sm:text-2xl ${
+                        option.hasDiscount
+                          ? "text-gold-gradient"
+                          : "text-slate-100"
+                      }`}
+                    >
+                      {formatCOP(option.totalAmount)}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="print-cols-2 mt-6 grid gap-4 sm:grid-cols-2">
-                  {COMMERCIAL_TERMS.paymentScheme.map((phase) => (
+                {/* Two Payment Milestones */}
+                <div className="print-cols-2 mt-5 grid gap-4 sm:grid-cols-2">
+                  {option.phases.map((phase) => (
                     <div
                       key={phase.step}
                       className="flex flex-col justify-between rounded-2xl border border-white/10 bg-[#090A0F]/65 p-5"
                     >
                       <div>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between gap-2">
                           <span className="font-mono text-xs font-semibold text-[#38BDF8] sm:text-sm">
                             PAGO {phase.step}
                           </span>
-                          <span className="rounded-lg bg-[#D4AF37]/15 px-3 py-0.5 font-mono text-sm font-bold text-[#F3E5AB]">
+                          <span
+                            className={`rounded-lg px-3 py-0.5 font-mono text-sm font-bold ${
+                              option.hasDiscount
+                                ? "bg-[#D4AF37]/15 text-[#F3E5AB]"
+                                : "bg-white/[0.08] text-slate-200"
+                            }`}
+                          >
                             {phase.percentage}
                           </span>
                         </div>
-                        <h4 className="mt-3 text-base font-bold text-slate-100 sm:text-lg">
+                        <h4 className="mt-3 text-base font-bold text-slate-100">
                           {phase.title}
                         </h4>
-                        <p className="mt-2 font-mono text-2xl font-bold text-[#F3E5AB] tabular-nums sm:text-[1.75rem]">
+                        <p
+                          className={`mt-2 font-mono text-xl font-bold tabular-nums sm:text-2xl ${
+                            option.hasDiscount
+                              ? "text-[#F3E5AB]"
+                              : "text-slate-100"
+                          }`}
+                        >
                           {formatCOP(phase.amount)}
                         </p>
                       </div>
@@ -101,51 +173,53 @@ export default function CommercialTerms() {
                     </div>
                   ))}
                 </div>
-              </motion.div>
+              </motion.article>
+            ))}
+          </div>
 
-              {/* Warranty & Validity */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{
-                  duration: 0.5,
-                  delay: 0.08,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="luxury-card print-keep-together flex-1 rounded-3xl p-6 sm:p-8"
-              >
-                <div className="print-cols-2 grid gap-6 sm:grid-cols-2">
-                  <div>
-                    <div className="flex items-center gap-2.5 text-base font-bold text-slate-100">
-                      <ShieldCheck className="h-5 w-5 text-[#10B981]" />
-                      {COMMERCIAL_TERMS.warranty.duration}
-                    </div>
-                    <p className="mt-2.5 text-[15px] leading-relaxed text-slate-300 sm:text-base">
-                      {COMMERCIAL_TERMS.warranty.description}
-                    </p>
+          <div className="print-cols-2 mt-6 grid items-stretch gap-6 lg:grid-cols-12">
+            {/* Warranty & Validity */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{
+                duration: 0.5,
+                delay: 0.08,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="luxury-card print-keep-together flex flex-col justify-between rounded-3xl p-6 sm:p-8 lg:col-span-7"
+            >
+              <div className="print-cols-2 grid gap-6 sm:grid-cols-2">
+                <div>
+                  <div className="flex items-center gap-2.5 text-base font-bold text-slate-100">
+                    <ShieldCheck className="h-5 w-5 text-[#10B981]" />
+                    {COMMERCIAL_TERMS.warranty.duration}
                   </div>
-
-                  <div>
-                    <div className="flex items-center gap-2.5 text-base font-bold text-slate-100">
-                      <CalendarCheck2 className="h-5 w-5 text-[#38BDF8]" />
-                      Validez: {COMMERCIAL_TERMS.validity.days} Días Calendario
-                    </div>
-                    <p className="mt-2.5 text-[15px] leading-relaxed text-slate-300 sm:text-base">
-                      {COMMERCIAL_TERMS.validity.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5 flex items-start gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-4">
-                  <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
-                  <p className="text-sm leading-relaxed text-slate-300">
-                    <strong className="text-amber-200">Nota legal: </strong>
-                    {COMMERCIAL_TERMS.warranty.exclusions}
+                  <p className="mt-2.5 text-[15px] leading-relaxed text-slate-300 sm:text-base">
+                    {COMMERCIAL_TERMS.warranty.description}
                   </p>
                 </div>
-              </motion.div>
-            </div>
+
+                <div>
+                  <div className="flex items-center gap-2.5 text-base font-bold text-slate-100">
+                    <CalendarCheck2 className="h-5 w-5 text-[#38BDF8]" />
+                    Validez: {COMMERCIAL_TERMS.validity.days} Días Calendario
+                  </div>
+                  <p className="mt-2.5 text-[15px] leading-relaxed text-slate-300 sm:text-base">
+                    {COMMERCIAL_TERMS.validity.description}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 flex items-start gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-4">
+                <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+                <p className="text-sm leading-relaxed text-slate-300">
+                  <strong className="text-amber-200">Nota legal: </strong>
+                  {COMMERCIAL_TERMS.warranty.exclusions}
+                </p>
+              </div>
+            </motion.div>
 
             {/* Rosa Coral Executive Contact & Print Card */}
             <motion.aside
